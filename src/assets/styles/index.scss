@@ -1,6 +1,15 @@
-@use "custom_variables";
+@use "custom_variables" as *;
+
+@use "bootstrap/scss/bootstrap" with (
+  $primary: $primary,
+  $secondary: $secondary,
+  $theme-colors: $theme-colors,
+  $font-family-sans-serif: $font-family-sans-serif
+);
+
 @use "fonts";
 
 html, body {
   height: 100%;
+  background-color: #37cd6212;
 }
