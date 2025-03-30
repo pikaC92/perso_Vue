@@ -57,7 +57,7 @@ export default {
 
 <style lang="scss">
 
-@import "src/assets/styles/custom_variables";
+@import "../assets/styles/custom_variables";
 
 #nav .container {
   padding-top: 5px;
