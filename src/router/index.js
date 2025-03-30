@@ -1,25 +1,24 @@
 import {createRouter, createWebHistory} from "vue-router";
 import HomeView from "@/views/HomeView.vue";
-import AboutView from "@/views/AboutView.vue";
+import AlimentForm from "@/views/AlimentForm.vue";
 
 
 const routes = [
     {
-        path:'/',
+        path: '/',
         name: 'home-view',
         component: HomeView
     },
-    {
-        path:'/list',
-        name: 'list-view',
-        component: AboutView
+    {   path: '/ingredient',
+        name: 'AlimentForm',
+        component: AlimentForm
     },
 
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+    history: createWebHistory(),
+    routes,
 });
 
 export default router;
