@@ -39,9 +39,10 @@
           />
         </div>
         <b-col>
-          <b-button variant="primary" type="submit">
-            Valider
-          </b-button>
+          <b-button variant="primary" type="submit">Valider</b-button>
+          <router-link to="/">
+            <b-button variant="gray" type="button" class="me-4">Annuler</b-button>
+          </router-link>
         </b-col>
 
       </b-form>

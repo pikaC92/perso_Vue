@@ -4,11 +4,13 @@
     <b-container fluid class="bg-light p-2 border-bottom">
       <b-row class="mb-2 justify-content-end">
         <b-col cols="auto" class="pe-0">
-          <b-button size="sm" variant="secondary">+ Plats</b-button>
+          <router-link to="/plat">
+            <b-button size="sm" variant="gray">+ Plats</b-button>
+          </router-link>
         </b-col>
         <b-col cols="auto">
           <router-link to="/ingredient">
-            <b-button size="sm" variant="secondary">+ Ing.</b-button>
+            <b-button size="sm" variant="gray">+ Ing.</b-button>
           </router-link>
         </b-col>
       </b-row>
@@ -20,40 +22,41 @@
     </b-container>
 
     <b-container class="mt-2 pt-2">
-
-      <!-- Bloc Traitements -->
-      <b-card class="mb-3">
+      <b-card class="mb-3" v-if=traitementsVisible>
         <b-form @submit.prevent="validerTraitements">
           <b-form-select v-for="(_, index) in traitements" v-model="traitements[index]" :options="optionsTraitements"
                          class="mb-4"/>
-          <b-button type="submit" variant="success" block class="float-end">Valider</b-button>
+          <b-button type="submit" variant="primary" block class="float-end">Valider</b-button>
         </b-form>
       </b-card>
 
       <!-- Bloc Compléments alimentaires -->
       <b-card class="mb-3">
         <b-form @submit.prevent="validerComplements">
-          <b-form-checkbox-group v-model="complementsSelectionnes" :options="optionsComplements" class="mb-2"/>
-          <b-button type="submit" variant="success" block class="float-end">Valider</b-button>
+          <b-form-checkbox-group v-model="complements" :options="optionsComplements" class="mb-2"/>
+          <b-button type="submit" variant="primary" block class="float-end">Valider</b-button>
         </b-form>
       </b-card>
 
       <!-- Bloc Alimentation -->
       <b-card title="Alimentation" class="mb-3">
-        <div v-for="(plat, index) in plats" :key="index" class="mb-3">
-          <b-form-select v-model="plat.selection" :options="optionsPlats" @change="majComposition(index)" class="mb-2"/>
-          <div v-if="plat.composition">
+
+        <b-form @submit.prevent="validerAlimentation">
+          <b-form-select v-for="(_, index) in plats" v-model="plats[index]" :options="optionsPlats"
+                         class="mb-4"/>
+          <!--@change="majComposition(index)"-->
+          <!--div v-if=false>
             <small>Énergie: {{ plat.composition.energie }} kcal | L: {{ plat.composition.lipides }}g | G:
               {{ plat.composition.glucides }}g | P: {{ plat.composition.proteines }}g</small>
-          </div>
-        </div>
-        <b-button variant="info" size="sm" class="me-2" @click="ajouterPlat">Ajouter un plat</b-button>
-        <b-button variant="success" size="sm" @click="validerAlimentation" class="float-end">Valider</b-button>
+          </div-->
+          <b-button variant="secondary" type="button" class="me-2" @click="ajouterPlat">+ Ajouter</b-button>
+          <b-button type="submit" variant="primary" block class="float-end">Valider</b-button>
+        </b-form>
       </b-card>
 
       <!-- Bloc Besoins -->
       <b-card title="Besoins nutritionnels" class="mb-3">
-        <b-button variant="warning" block @click="calculerBesoins">Calculer</b-button>
+        <b-button variant="secondary" block @click="calculerBesoins">Calculer</b-button>
         <div v-if="besoins">
           <p class="mt-2">
             {{ besoins.energie }}% énergie, {{ besoins.lipides }}% L, {{ besoins.glucides }}% G, {{
@@ -68,27 +71,27 @@
 
 <script>
 
+import {
+  get_complements,
+  get_medicaments,
+  get_plats,
+  save_complements,
+  save_plats,
+  save_traitement
+} from "@/js/ApiServices";
+
 export default {
   name: 'home-view',
   data() {
     return {
       currentDate: new Date().toLocaleDateString('fr-FR'),
+      traitementsVisible: true,
       traitements: [null, null, null],
-      optionsTraitements: [
-        {value: null, text: '-- Sélectionner --'},
-        {value: 'A', text: 'Traitement A'},
-        {value: 'B', text: 'Traitement B'},
-      ],
-      complementsSelectionnes: [],
-      optionsComplements: ['Magnésium', 'Antioxydant', 'Fer', 'Calcium', 'B9', 'D', 'Calcium'],
-      plats: [
-        {selection: null, composition: null}
-      ],
-      optionsPlats: [
-        {value: null, text: 'Choisir un plat'},
-        {value: 'plat1', text: 'Riz - Poulet'},
-        {value: 'plat2', text: 'Pâtes - Légumes'},
-      ],
+      optionsTraitements: [],
+      complements: [],
+      optionsComplements: [],
+      plats: [null, null, null],
+      optionsPlats: [],
       compositionsPlats: {
         plat1: {energie: 600, lipides: 20, glucides: 70, proteines: 30},
         plat2: {energie: 500, lipides: 10, glucides: 80, proteines: 20},
@@ -98,20 +101,27 @@ export default {
   },
   methods: {
     validerTraitements() {
-      this.traitementsVisible = false;
+      save_traitement(this.traitements).then(response => {
+        console.log(response)
+        this.traitementsVisible = false;
+      })
     },
     validerComplements() {
-      this.complementsVisible = false;
+      save_complements(this.complements).then(response => {
+        console.log(response)
+      })
     },
     ajouterPlat() {
-      this.plats.push({selection: null, composition: null});
+      this.plats.push(null);
     },
     majComposition(index) {
       const plat = this.plats[index];
       plat.composition = this.compositionsPlats[plat.selection] || null;
     },
     validerAlimentation() {
-      // enregistrement simulé
+      save_plats(this.plats).then(response => {
+        console.log(response)
+      })
     },
     calculerBesoins() {
       let total = {energie: 0, lipides: 0, glucides: 0, proteines: 0};
@@ -132,13 +142,35 @@ export default {
         proteines: Math.round((total.proteines / ref.proteines) * 100),
       };
     }
+  },
+  created() {
+    //load data
+    get_medicaments().then(response => {
+      this.traitementsVisible = !response['status']
+      if (this.traitementsVisible) {
+        this.optionsTraitements = [
+          {value: null, text: '-- Sélectionner --'},
+          ...response["medicaments"]
+        ];
+        this.traitements = response["suggested"]
+      }
+    })
+    get_plats().then(response => {
+      this.optionsPlats = [
+        {value: null, text: '-- Sélectionner --'},
+        ...response
+      ];
+    })
+    get_complements().then(response => {
+      this.optionsComplements = response;
+    })
   }
 };
 </script>
 
 <style lang="scss">
 .form-check-inline {
-  width: 40%;
+  width: 44%;
   margin-bottom: 10px;
 }
 

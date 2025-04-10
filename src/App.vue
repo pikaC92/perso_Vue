@@ -16,15 +16,15 @@
   height: 100%;
 }
 
-body {
-  background-color: deeppink;
-}
 </style>
 
 <script>
 
+import {get_medicaments} from "@/js/ApiServices";
+
 export default {
   name: 'App',
-  methods: {}
+  methods: {
+  }
 }
 </script>

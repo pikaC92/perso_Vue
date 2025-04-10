@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory} from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import AlimentForm from "@/views/AlimentForm.vue";
+import PlatForm from "@/views/PlatForm.vue";
 
 
 const routes = [
@@ -12,6 +13,10 @@ const routes = [
     {   path: '/ingredient',
         name: 'AlimentForm',
         component: AlimentForm
+    },
+    {   path: '/plat',
+        name: 'PlatForm',
+        component: PlatForm
     },
 
 ];
